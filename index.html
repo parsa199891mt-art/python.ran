@@ -29,16 +29,17 @@
         }
 
         .line-numbers {
-            width: 50px;
+            width: 45px;
             padding: 1rem 0;
             background-color: #1e293b;
             color: #64748b;
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1.125rem;
+            font-size: 1rem;
             line-height: 1.75rem;
             user-select: none;
             border-left: 1px solid #334155;
+            overflow: hidden;
         }
 
         .code-editor {
@@ -63,6 +64,17 @@
             direction: ltr;
         }
 
+        .snippet-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+        
+        .snippet-card:hover {
+            border-color: #3b82f6;
+            background: #243347;
+        }
+
         /* Loading Spinner */
         .spinner {
             border: 2px solid rgba(59, 130, 246, 0.1);
@@ -80,8 +92,8 @@
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #1e293b;
@@ -90,97 +102,174 @@
             background: #475569;
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <!-- Header -->
-    <header class="bg-slate-800/50 backdrop-blur-md sticky top-0 z-10 border-b border-slate-700 p-4">
+    <header class="bg-slate-800/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700 p-4 shadow-xl">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <h1 class="text-xl font-bold flex items-center gap-3">
-                <div class="bg-slate-900 p-2 rounded-lg">
-                    <i class="fab fa-python text-yellow-400 text-2xl"></i>
+                <div class="bg-slate-900 p-2 rounded-lg ring-1 ring-slate-700">
+                    <i class="fab fa-python text-yellow-400 text-2xl animate-pulse"></i>
                 </div>
-                <span>ویرایشگر پیشرفته پایتون</span>
+                <span>ویرایشگر هوشمند پایتون</span>
             </h1>
             
             <div class="flex items-center gap-4">
                 <div id="status" class="text-xs flex items-center bg-slate-900 px-4 py-2 rounded-full border border-slate-700">
                     <div class="spinner ml-3" id="loading-spinner"></div>
-                    <span id="status-text" class="text-slate-400">در حال بارگذاری مفسر...</span>
+                    <span id="status-text" class="text-slate-400">در حال آماده‌سازی محیط...</span>
                 </div>
-                <button id="run-btn" disabled class="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all flex items-center gap-2 transform active:scale-95">
+                <button id="run-btn" disabled class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white px-8 py-2 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 transform active:scale-95">
                     <i class="fas fa-play text-xs"></i>
-                    اجرای برنامه
+                    اجرای کد
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto p-4 flex flex-col gap-6">
+    <main class="flex-grow container mx-auto p-4 flex flex-col lg:flex-row gap-6">
         
-        <!-- Editor Section -->
-        <div class="flex-grow flex flex-col bg-slate-800 rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
-            <div class="bg-slate-700/50 px-4 py-2 flex justify-between items-center border-b border-slate-700">
-                <div class="flex gap-1.5">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        <!-- Sidebar: Snippets -->
+        <aside class="lg:w-1/3 flex flex-col gap-4">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-book-open text-blue-400"></i>
+                    کتابخانه کدهای آماده
+                </h2>
+                <div class="flex flex-col gap-4 overflow-y-auto max-h-[600px] pr-1">
+                    
+                    <!-- Snippet 1 -->
+                    <div class="snippet-card p-3 rounded-lg relative group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-300">رسم الگوی هندسی</span>
+                            <button onclick="copySnippet(1)" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2 py-1 rounded">کپی <i class="fas fa-copy ml-1"></i></button>
+                        </div>
+                        <pre id="code-1" class="hidden">import math
+for i in range(10):
+    spaces = " " * (10 - i)
+    stars = "*" * (2 * i + 1)
+    print(spaces + stars)</pre>
+                        <p class="text-[11px] text-slate-400">یک مثلث ستاره‌ای متقارن در کنسول چاپ می‌کند.</p>
+                    </div>
+
+                    <!-- Snippet 2 -->
+                    <div class="snippet-card p-3 rounded-lg relative group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-300">بازی حدس عدد</span>
+                            <button onclick="copySnippet(2)" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2 py-1 rounded">کپی <i class="fas fa-copy ml-1"></i></button>
+                        </div>
+                        <pre id="code-2" class="hidden">import random
+target = random.randint(1, 10)
+print(f"من یک عدد بین 1 تا 10 فکر کردم...")
+# در نسخه وب فعلا ورودی مستقیم محدود است، از این کد برای منطق استفاده کنید:
+print(f"عدد تصادفی تولید شده: {target}")</pre>
+                        <p class="text-[11px] text-slate-400">منطق پایه تولید عدد تصادفی برای بازی.</p>
+                    </div>
+
+                    <!-- Snippet 3 -->
+                    <div class="snippet-card p-3 rounded-lg relative group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-300">محاسبه فاکتوریل</span>
+                            <button onclick="copySnippet(3)" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2 py-1 rounded">کپی <i class="fas fa-copy ml-1"></i></button>
+                        </div>
+                        <pre id="code-3" class="hidden">def factorial(n):
+    if n == 0: return 1
+    return n * factorial(n-1)
+
+num = 5
+print(f"فاکتوریل {num} برابر است با: {factorial(num)}")</pre>
+                        <p class="text-[11px] text-slate-400">محاسبه ریاضی به روش بازگشتی (Recursive).</p>
+                    </div>
+
+                    <!-- Snippet 4 -->
+                    <div class="snippet-card p-3 rounded-lg relative group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-300">معکوس کردن متن</span>
+                            <button onclick="copySnippet(4)" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2 py-1 rounded">کپی <i class="fas fa-copy ml-1"></i></button>
+                        </div>
+                        <pre id="code-4" class="hidden">text = "Mohammad Parsa Valian"
+reversed_text = text[::-1]
+print(f"Original: {text}")
+print(f"Reversed: {reversed_text}")</pre>
+                        <p class="text-[11px] text-slate-400">یک روش سریع پایتونی برای وارونه کردن رشته‌ها.</p>
+                    </div>
+
+                    <!-- Snippet 5 -->
+                    <div class="snippet-card p-3 rounded-lg relative group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-300">لیست اعداد زوج</span>
+                            <button onclick="copySnippet(5)" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2 py-1 rounded">کپی <i class="fas fa-copy ml-1"></i></button>
+                        </div>
+                        <pre id="code-5" class="hidden">evens = [x for x in range(20) if x % 2 == 0]
+print("اعداد زوج زیر 20:")
+print(evens)</pre>
+                        <p class="text-[11px] text-slate-400">استفاده از List Comprehension برای فیلتر کردن.</p>
+                    </div>
+
                 </div>
-                <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase bg-slate-900 px-3 py-1 rounded">main.py</span>
             </div>
-            
-            <div class="editor-container flex-grow">
-                <div id="line-numbers" class="line-numbers">1</div>
-                <textarea id="code-input" class="code-editor" spellcheck="false"># کد پایتون خود را اینجا بنویسید
-print("سلام دنیا!")
-name = "محمد پارسا ولیان"
-print(f"طراح سایت: {name}")
-
-def welcome():
-    for i in range(3):
-        print(f"خوش آمدید - تکرار {i+1}")
-
-welcome()</textarea>
-            </div>
-        </div>
-
-        <!-- Output Section -->
-        <div class="h-1/3 min-h-[180px] flex flex-col bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-inner">
-            <div class="bg-slate-900/80 px-4 py-2 flex justify-between items-center border-b border-slate-800">
-                <div class="flex items-center gap-2 text-slate-400">
-                    <i class="fas fa-terminal text-xs"></i>
-                    <span class="text-xs font-bold">خروجی کنسول</span>
+        </aside>
+        
+        <!-- Editor & Output -->
+        <div class="lg:w-2/3 flex flex-col gap-6">
+            <!-- Editor -->
+            <div class="flex-grow flex flex-col bg-slate-800 rounded-xl overflow-hidden border border-slate-700 shadow-2xl min-h-[400px]">
+                <div class="bg-slate-700/50 px-4 py-2 flex justify-between items-center border-b border-slate-700">
+                    <div class="flex gap-1.5">
+                        <div class="w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-900/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-500 shadow-lg shadow-amber-900/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-900/50"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase bg-slate-950/50 px-3 py-1 rounded">main.py</span>
                 </div>
-                <button onclick="clearConsole()" class="text-slate-500 hover:text-red-400 transition-colors p-1" title="پاکسازی">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+                
+                <div class="editor-container flex-grow">
+                    <div id="line-numbers" class="line-numbers">1</div>
+                    <textarea id="code-input" class="code-editor" spellcheck="false"># کد خود را اینجا بنویسید یا از کدهای آماده سمت راست کپی کنید
+print("سلام! به ویرایشگر محمد پارسا خوش آمدید.")</textarea>
+                </div>
             </div>
-            <pre id="output" class="console-output p-5 overflow-y-auto text-sm leading-relaxed text-blue-100 whitespace-pre-wrap flex-grow"></pre>
+
+            <!-- Output -->
+            <div class="h-[200px] flex flex-col bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                <div class="bg-slate-900/80 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                    <div class="flex items-center gap-2 text-slate-500">
+                        <i class="fas fa-terminal text-[10px]"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-tighter">Terminal Output</span>
+                    </div>
+                    <button onclick="clearConsole()" class="text-slate-600 hover:text-rose-400 transition-colors" title="پاکسازی کنسول">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </div>
+                <pre id="output" class="console-output p-4 overflow-y-auto text-xs md:text-sm leading-relaxed text-emerald-100/90 whitespace-pre-wrap flex-grow"></pre>
+            </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-950 border-t border-slate-800 p-8">
+    <footer class="bg-slate-950/80 border-t border-slate-800 p-6 mt-8">
         <div class="container mx-auto text-center">
             <p class="text-slate-500 text-sm md:text-base flex items-center justify-center gap-2">
                 تمامی حقوق این سایت برای 
-                <span class="text-blue-400 font-bold">محمد پارسا ولیان</span> 
+                <span class="text-emerald-400 font-bold tracking-wide">محمد پارسا ولیان</span> 
                 است
-                <span class="text-lg">©</span>
+                <span class="text-xl text-slate-400">©</span>
             </p>
-            <div class="flex justify-center gap-6 mt-4">
-                <a href="#" class="text-slate-600 hover:text-blue-400 transition-colors"><i class="fab fa-github text-xl"></i></a>
-                <a href="#" class="text-slate-600 hover:text-blue-400 transition-colors"><i class="fab fa-linkedin text-xl"></i></a>
-                <a href="#" class="text-slate-600 hover:text-blue-400 transition-colors"><i class="fas fa-envelope text-xl"></i></a>
+            <div class="flex justify-center gap-8 mt-4 text-slate-600">
+                <a href="#" class="hover:text-emerald-400 transition-all transform hover:scale-110"><i class="fab fa-github text-xl"></i></a>
+                <a href="#" class="hover:text-emerald-400 transition-all transform hover:scale-110"><i class="fab fa-linkedin text-xl"></i></a>
+                <a href="#" class="hover:text-emerald-400 transition-all transform hover:scale-110"><i class="fas fa-envelope text-xl"></i></a>
             </div>
         </div>
     </footer>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-2 rounded-full shadow-2xl opacity-0 transition-opacity pointer-events-none z-[100]">
+        کد کپی شد!
+    </div>
 
     <script>
         let pyodide;
@@ -190,11 +279,25 @@ welcome()</textarea>
         const spinner = document.getElementById('loading-spinner');
         const codeInput = document.getElementById('code-input');
         const lineNumbers = document.getElementById('line-numbers');
+        const toast = document.getElementById('toast');
 
-        // Update Line Numbers
         function updateLineNumbers() {
             const lines = codeInput.value.split('\n').length;
             lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
+        }
+
+        function copySnippet(id) {
+            const code = document.getElementById('code-' + id).innerText;
+            const el = document.createElement('textarea');
+            el.value = code;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            // Show toast
+            toast.style.opacity = "1";
+            setTimeout(() => toast.style.opacity = "0", 2000);
         }
 
         codeInput.addEventListener('input', updateLineNumbers);
@@ -202,21 +305,19 @@ welcome()</textarea>
             lineNumbers.scrollTop = codeInput.scrollTop;
         });
 
-        // Initialize Pyodide
         async function main() {
             try {
                 pyodide = await loadPyodide();
-                statusText.innerText = "آماده برای اجرا";
-                statusText.classList.remove('text-slate-400');
-                statusText.classList.add('text-green-400');
+                statusText.innerText = "سیستم آماده است";
+                statusText.className = "text-emerald-400";
                 spinner.style.display = 'none';
                 runBtn.disabled = false;
-                appendOutput("مفسر پایتون آماده است.\n");
+                appendOutput("محیط پایتون با موفقیت بارگذاری شد.\n");
                 updateLineNumbers();
             } catch (err) {
-                statusText.innerText = "خطا در بارگذاری";
-                statusText.classList.add('text-red-400');
-                appendOutput("خطا در بارگذاری هسته: " + err.message);
+                statusText.innerText = "خطا در اتصال";
+                statusText.className = "text-rose-400";
+                appendOutput("خطا در سیستم: " + err.message);
             }
         }
         main();
@@ -233,23 +334,20 @@ welcome()</textarea>
         runBtn.addEventListener('click', async () => {
             const code = codeInput.value;
             clearConsole();
-            appendOutput("> در حال اجرای کد...");
+            appendOutput(">>> Running code...");
             
             try {
                 pyodide.setStdout({
-                    batched: (str) => {
-                        appendOutput(str);
-                    }
+                    batched: (str) => appendOutput(str)
                 });
 
                 await pyodide.runPythonAsync(code);
-                appendOutput("\n[موفقیت‌آمیز]");
+                appendOutput("\n[Execution Finished]");
             } catch (err) {
-                appendOutput("\n[خطا]:\n" + err.message);
+                appendOutput("\n[Runtime Error]:\n" + err.message);
             }
         });
 
-        // Add Tab key support
         codeInput.addEventListener('keydown', function(e) {
             if (e.key == 'Tab') {
                 e.preventDefault();
